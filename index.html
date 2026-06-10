@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deal Support KM Evaluation — Samsara FY27</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;color:#1C1917;background:#F7F6F2;min-height:100vh}
+
+/* ── Header ── */
+header{background:#1C1917;position:sticky;top:0;z-index:100}
+.header-inner{max-width:1600px;margin:0 auto;padding:13px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.htitle{display:flex;align-items:center;gap:12px}
+.hmark{width:8px;height:32px;background:#F97316;border-radius:2px;flex-shrink:0}
+h1{font-size:14px;font-weight:600;color:#fff;letter-spacing:-.01em}
+.hsub{font-size:11px;color:#78716C;margin-top:1px}
+.hbtns{display:flex;gap:8px;flex-shrink:0}
+.btn{font-size:11px;font-weight:500;font-family:inherit;padding:6px 13px;border-radius:6px;cursor:pointer;transition:all .15s}
+.btn-exp{background:#F97316;color:#fff;border:1.5px solid #F97316}
+.btn-exp:hover{background:#EA580C;border-color:#EA580C}
+.btn-rst{background:transparent;color:#78716C;border:1.5px solid #3C3830}
+.btn-rst:hover{background:#292524;color:#F5F5F4}
+
+/* ── Tabs ── */
+.tabs{background:#F7F6F2;border-bottom:1.5px solid #EAE8E3;padding:10px 28px;display:flex;gap:0;align-items:center}
+.tab-group{display:inline-flex;background:#EAE8E3;border-radius:8px;padding:3px;gap:2px}
+.tab{font-size:12px;font-weight:500;font-family:inherit;padding:7px 18px;border:none;background:transparent;color:#78716C;cursor:pointer;border-radius:6px;transition:all .15s;letter-spacing:.01em}
+.tab:hover{color:#1C1917;background:rgba(255,255,255,.5)}
+.tab.active{background:#fff;color:#1C1917;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+
+.view{display:none}
+.view.active{display:block}
+.container{max-width:1600px;margin:0 auto;padding:28px}
+
+/* ── Summary: Recommendations banner ── */
+.reco-strip{
+  background:#fff;border:1.5px solid #A7F3D0;border-radius:12px;
+  padding:14px 20px;margin-bottom:24px;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+}
+.reco-label{font-size:10px;font-weight:700;color:#065F46;text-transform:uppercase;letter-spacing:.08em;flex-shrink:0}
+.reco-pills{display:flex;gap:8px;flex-wrap:wrap}
+.reco-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border-radius:20px;background:#ECFDF5;border:1.5px solid #6EE7B7;font-size:12px;font-weight:600;color:#065F46}
+.reco-pill .em{font-size:14px}
+.reco-note{margin-left:auto;font-size:11px;color:#A8A29E;font-style:italic}
+
+/* ── Summary: Vendor card grid ── */
+.vgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:1200px){.vgrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.vgrid{grid-template-columns:1fr}}
+
+.vcard{background:#fff;border-radius:16px;border:1.5px solid #EAE8E3;overflow:hidden;transition:box-shadow .2s,transform .2s}
+.vcard:hover{box-shadow:0 8px 24px rgba(0,0,0,.09);transform:translateY(-2px)}
+.vcard-stripe{height:5px;width:100%}
+
+.vcard-body{padding:18px 20px}
+.vcard-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px}
+.vcard-name{font-weight:700;font-size:13px;color:#1C1917;line-height:1.2}
+.verdict{font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;flex-shrink:0;margin-left:8px;letter-spacing:.02em}
+.v-yes{background:#ECFDF5;color:#065F46}
+.v-no{background:#FEF2F2;color:#991B1B}
+.v-maybe{background:#FFFBEB;color:#92400E}
+.v-tbd{background:#F5F5F4;color:#78716C}
+
+.vcard-score-area{text-align:center;margin:0 0 18px;padding:16px 0;border-radius:10px;background:#FAFAF8}
+.score-num{font-size:46px;font-weight:900;letter-spacing:-.04em;line-height:1}
+.score-den{font-size:14px;font-weight:400;color:#A8A29E}
+.score-word{font-size:9px;text-transform:uppercase;letter-spacing:.1em;margin-top:4px;font-weight:700;color:#A8A29E}
+
+.vcard-cats{display:flex;flex-direction:column;gap:8px}
+.mini-row{display:flex;align-items:center;gap:8px}
+.mini-label{font-size:10px;color:#78716C;min-width:80px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini-track{flex:1;height:6px;background:#F0EDE8;border-radius:3px;overflow:hidden}
+.mini-fill{height:100%;border-radius:3px;transition:width .4s}
+.mini-pct{font-size:10px;font-weight:700;min-width:28px;text-align:right}
+
+/* ── Matrix ── */
+.mx-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.mx-hint{font-size:11px;color:#A8A29E}
+.mx-hint b{color:#F97316}
+
+.mx-wrap{overflow-x:auto;border-radius:12px;border:1.5px solid #EAE8E3}
+.mxtable{width:100%;border-collapse:collapse;background:#fff;min-width:1100px}
+.mxtable th{font-size:11px;font-weight:600;color:#78716C;padding:9px 8px;text-align:center;background:#FAFAF8;border-bottom:1.5px solid #EAE8E3;white-space:nowrap}
+.mxtable th:first-child{text-align:left;min-width:195px;position:sticky;left:0;background:#FAFAF8;z-index:2;padding-left:16px}
+.mxtable th.wth{min-width:52px;width:52px}
+.mxtable th.nth{text-align:left;min-width:185px;padding-left:10px}
+.mxtable td{padding:7px 5px;border-bottom:1px solid #F5F2EE;vertical-align:middle}
+.mxtable tr:last-child td{border-bottom:none}
+.mxtable td:first-child{position:sticky;left:0;background:#fff;z-index:1;font-size:12px;color:#1C1917;padding:9px 10px 9px 16px;border-right:1px solid #F0EDE8}
+.mxtable tr:hover td,.mxtable tr:hover td:first-child{background:#FDFCFA}
+.cat-row td{background:#1C1917!important;font-weight:700;font-size:10px;color:#F97316;text-transform:uppercase;letter-spacing:.1em;padding:9px 16px!important;border-bottom:none!important;border-right:none!important}
+
+/* Score badges — click to cycle — square pill style */
+.sbadge{display:inline-flex;align-items:center;justify-content:center;padding:4px 0;border-radius:5px;font-size:10px;font-weight:700;cursor:pointer;user-select:none;transition:transform .08s,filter .1s;width:64px;border:1.5px solid transparent;letter-spacing:.02em}
+.sbadge:hover{filter:brightness(.88)}
+.sbadge:active{transform:scale(.91)}
+.sb0{background:#F8FAFC;color:#94A3B8;border-color:#E2E8F0}   /* Unscored */
+.sb1{background:#FEF2F2;color:#DC2626;border-color:#FECACA}   /* No */
+.sb2{background:#FFFBEB;color:#D97706;border-color:#FDE68A}   /* Partial */
+.sb3{background:#ECFDF5;color:#059669;border-color:#A7F3D0}   /* Meets */
+.sb4{background:#EEF2FF;color:#4F46E5;border-color:#C7D2FE}   /* Exceeds */
+td.scc{text-align:center;padding:5px 3px}
+
+/* Weight chip — click to cycle High/Med/Low */
+.wchip{display:inline-flex;align-items:center;justify-content:center;padding:3px 0;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer;user-select:none;transition:filter .1s;width:36px;border:1.5px solid transparent;letter-spacing:.04em}
+.wchip:hover{filter:brightness(.85)}
+.wH{background:#FFF7ED;color:#EA580C;border-color:#FED7AA}
+.wM{background:#F5F5F4;color:#57534E;border-color:#E7E5E0}
+.wL{background:#FAFAF9;color:#A8A29E;border-color:#EAE8E3}
+td.wcc{text-align:center;padding:5px 3px}
+
+.rnote{font-size:11px;color:#A8A29E;width:100%;border:none;background:transparent;font-family:inherit;resize:none;line-height:1.4;padding:2px 4px}
+.rnote:focus{outline:none;color:#1C1917}
+.rnote::placeholder{color:#D6D3CD}
+
+/* ── Vendor Notes ── */
+.vtabs-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+.vtab{padding:6px 14px;border-radius:20px;border:1.5px solid #EAE8E3;background:#fff;font-size:11px;font-weight:600;font-family:inherit;cursor:pointer;color:#57534E;transition:all .15s;letter-spacing:.01em}
+.vtab:hover{background:#F7F6F2;color:#1C1917}
+.vtab.active{background:#1C1917;color:#fff;border-color:#1C1917}
+
+.notes-card{background:#fff;border-radius:12px;border:1.5px solid #EAE8E3;padding:24px}
+.vpanel{display:none}
+.vpanel.active{display:block}
+.vp-head{display:flex;align-items:center;gap:14px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #F0EDE8}
+.vi-av{width:44px;height:44px;border-radius:10px;background:#FFF7ED;color:#EA580C;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;flex-shrink:0;border:1.5px solid #FDDCB5}
+.vp-info{}
+.vp-name{font-weight:700;font-size:15px;color:#1C1917}
+.vp-score-str{font-size:12px;color:#78716C;margin-top:2px}
+
+.ngrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){.ngrid{grid-template-columns:1fr}}
+.nf{display:flex;flex-direction:column;gap:5px}
+.nf.s2{grid-column:1/-1}
+.nlbl{font-size:10px;font-weight:700;color:#A8A29E;text-transform:uppercase;letter-spacing:.07em}
+.nta{font-size:12px;font-family:inherit;color:#1C1917;border:1.5px solid #EAE8E3;border-radius:8px;padding:9px 11px;resize:vertical;line-height:1.5;min-height:74px;background:#fff;transition:border-color .15s}
+.nta:focus{outline:none;border-color:#F97316}
+
+/* Modal */
+.moverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;align-items:center;justify-content:center}
+.moverlay.open{display:flex}
+.mbox{background:#fff;border-radius:14px;padding:26px;max-width:340px;width:92%;border:1.5px solid #EAE8E3}
+.mbox h3{font-size:15px;font-weight:700;margin-bottom:8px}
+.mbox p{font-size:13px;color:#78716C;margin-bottom:22px;line-height:1.5}
+.macts{display:flex;gap:8px;justify-content:flex-end}
+.mbtn{font-size:12px;font-weight:500;font-family:inherit;padding:7px 14px;border-radius:7px;cursor:pointer;transition:all .15s}
+.mbtn-cancel{background:#fff;color:#57534E;border:1.5px solid #EAE8E3}
+.mbtn-cancel:hover{background:#F7F6F2}
+.mbtn-confirm{background:#DC2626;color:#fff;border:1.5px solid #DC2626}
+.mbtn-confirm:hover{background:#B91C1C;border-color:#B91C1C}
+
+/* Toast */
+#toast{position:fixed;bottom:18px;right:18px;font-size:11px;font-weight:600;background:#1C1917;color:#A7F3D0;border-radius:8px;padding:6px 14px;z-index:150;transition:opacity .4s;letter-spacing:.02em}
+#toast.saving{color:#FDE68A}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="htitle">
+      <div class="hmark"></div>
+      <div>
+        <h1>Deal Support KM Tech Stack Evaluation</h1>
+        <div class="hsub">Samsara FY27 &nbsp;·&nbsp; 12 requirements across 2 categories &nbsp;·&nbsp; 8 vendors</div>
+      </div>
+    </div>
+    <div class="hbtns">
+      <button class="btn btn-exp" onclick="exportCSV()">Export CSV</button>
+      <button class="btn btn-rst" onclick="openReset()">Reset data</button>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs">
+  <div class="tab-group">
+    <button class="tab active" data-tab="summary" onclick="switchTab(this)">Summary</button>
+    <button class="tab" data-tab="matrix" onclick="switchTab(this)">Platform Scorecard</button>
+    <button class="tab" data-tab="notes" onclick="switchTab(this)">Platform Profiles</button>
+  </div>
+</nav>
+
+<div id="summary-view" class="view active">
+  <div class="container">
+    <div class="reco-strip">
+      <span class="reco-label">Recommendations</span>
+      <div class="reco-pills">
+        <span class="reco-pill"><span class="em">✅</span>Document360</span>
+        <span class="reco-pill"><span class="em">✅</span>Guru</span>
+      </div>
+      <span class="reco-note">Scores auto-update as you edit the matrix</span>
+    </div>
+    <div class="vgrid" id="vgrid"></div>
+  </div>
+</div>
+
+<div id="matrix-view" class="view">
+  <div class="container">
+    <div class="mx-topbar">
+      <div class="mx-hint">Click any score badge to cycle &nbsp;<b>Unscored → No → Partial → Meets → Exceeds</b>. Click weight chip to toggle priority.</div>
+    </div>
+    <div class="mx-wrap">
+      <table class="mxtable" id="mxtable"></table>
+    </div>
+  </div>
+</div>
+
+<div id="notes-view" class="view">
+  <div class="container">
+    <div class="vtabs-row" id="vtabs"></div>
+    <div class="notes-card" id="vpanels"></div>
+  </div>
+</div>
+
+<div id="reset-modal" class="moverlay">
+  <div class="mbox">
+    <h3>Reset all data?</h3>
+    <p>Restores all scores and notes to defaults. Your edits will be lost and cannot be undone.</p>
+    <div class="macts">
+      <button class="mbtn mbtn-cancel" onclick="closeReset()">Cancel</button>
+      <button class="mbtn mbtn-confirm" onclick="doReset()">Yes, reset</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast">Saved</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+
+const VENDORS = ["Google Docs","Zendesk","Confluence","Document360","Guru","ClickUp","Seismic","Letter AI"];
+const VERDICTS = ["no","maybe","no","yes","yes","tbd","tbd","tbd"];
+const VERDICT_LABELS = {yes:"✅ Recommend",no:"❌ Rule out",maybe:"🤷 If on Zendesk",tbd:"🔍 Evaluate"};
+
+const SL = ["Unscored","No","Partial","Meets","Exceeds"];
+const SW = [0, 0, 0.5, 0.85, 1.0];
+const WLABELS = ["L","L","M","H"]; // weight 1=L, 2=M, 3=H
+
+const CATS = [
+  {
+    label:"Strategic Criteria",
+    reqs:[
+      {id:"impl",     text:"Implementation LOE / Feasibility", w:3},
+      {id:"flex",     text:"Flexibility & Scalability",         w:2},
+      {id:"ai_cap",   text:"AI Capabilities",                   w:3},
+      {id:"analytics",text:"Analytics",                         w:2},
+      {id:"cost",     text:"Cost",                              w:2},
+    ]
+  },
+  {
+    label:"Feature Evaluation",
+    reqs:[
+      {id:"editor",  text:"Editor (WYSIWYG + HTML)", w:3},
+      {id:"version", text:"Version Control",          w:2},
+      {id:"sso",     text:"SSO Login",                w:2},
+      {id:"category",text:"Category Manager",         w:3},
+      {id:"tagging", text:"Tagging",                  w:3},
+      {id:"custom",  text:"Customizable",             w:2},
+      {id:"search",  text:"Search",                   w:3},
+    ]
+  }
+];
+
+// Pre-populated scores [GDocs, Zendesk, Confluence, Doc360, Guru, ClickUp, Seismic, LetterAI]
+const DS = {
+  impl:      [3,3,2,3,3,3,2,3],
+  flex:      [2,3,4,3,3,3,3,2],
+  ai_cap:    [2,3,3,4,4,3,3,4],
+  analytics: [1,3,3,4,3,3,4,3],
+  cost:      [4,2,3,3,2,3,2,3],
+  editor:    [4,3,4,4,3,3,3,4],
+  version:   [4,2,4,4,3,3,3,2],
+  sso:       [3,3,4,3,4,3,4,3],
+  category:  [1,3,3,4,3,3,4,3],
+  tagging:   [1,3,3,4,4,3,4,3],
+  custom:    [2,3,4,4,3,3,4,3],
+  search:    [2,3,3,4,4,3,4,4],
+};
+
+const DR = {
+  impl:      "Confluence has highest LOE — space planning, permissions, and macros need dedicated setup. Seismic also requires significant configuration.",
+  flex:      "Confluence is most flexible overall. Google Docs falls apart past ~100 docs without strict governance.",
+  ai_cap:    "Guru best-in-class for sales: contextual surfacing in SFDC/Slack. Document360 (Eddy AI) and Letter AI both AI-forward on roadmap.",
+  analytics: "Document360 has best standalone analytics — failed searches, gap analysis, reader engagement. Google Docs has essentially none.",
+  cost:      "Google Docs included in Workspace. Zendesk and Seismic are expensive standalone. Document360 has predictable flat-rate pricing.",
+  editor:    "Confluence has richest block library. Google Docs has best co-editing UX. Document360 and Letter AI both support raw HTML block.",
+  version:   "Document360 best-in-class KB versioning — named versions, side-by-side diff, restore. Zendesk and Letter AI have minimal version control.",
+  sso:       "Guru and Confluence have broadest SSO support (all paid plans / Standard+). All platforms support Okta/Azure AD at appropriate tiers.",
+  category:  "Document360 best-in-class — per-category settings, icons, visibility controls, landing pages. Google Docs has folders only.",
+  tagging:   "Document360 has tag groups + analytics. Guru's tagging powers AI surfacing in Slack and SFDC. Google Docs has no native tagging.",
+  custom:    "Confluence most customizable — 1,000+ marketplace add-ons. Document360 and Seismic both strong on branding and templates.",
+  search:    "Document360 best standalone KB search with gap analytics. Guru's contextual AI search is strongest for in-workflow sales use.",
+};
+
+const NF = [
+  {id:"overview",      label:"Overall impression", span:false},
+  {id:"strengths",     label:"Strengths",           span:false},
+  {id:"weaknesses",    label:"Weaknesses / gaps",   span:false},
+  {id:"pricing",       label:"Pricing & licensing", span:false},
+  {id:"recommendation",label:"Recommendation",      span:true},
+];
+
+const DN = [
+  {overview:"Free WYSIWYG editor in Google Workspace. Not a true KB — folders only, no tagging or taxonomy.",strengths:"Zero incremental cost. Best-in-class real-time co-editing. Full revision history with named versions and diff. Universally familiar.",weaknesses:"No KB structure, no tagging, no KB-aware search, no analytics. Falls apart past ~100 docs. Hidden cost in governance overhead and lost productivity.",pricing:"Included in Google Workspace. No additional licensing cost.",recommendation:"❌ Rule out as primary KB. May serve as a drafting surface that feeds into a proper KB platform."},
+  {overview:"Strong customer-facing help center. Only viable if team is already on Zendesk support.",strengths:"Strong customer-facing search analytics (deflection, CSAT, failed searches). Clean 3-level hierarchy. Good WYSIWYG + HTML source editor.",weaknesses:"~$19–$115/agent/mo — expensive standalone. Weak internal usage analytics. No true versioning or diff. SSO gated to higher plans.",pricing:"~$19–$115/agent/mo depending on Suite plan. KB Guide may require Suite Growth+ for full features.",recommendation:"🤷 Only viable if already on Zendesk ecosystem. Otherwise cost-prohibitive for an internal-only KB."},
+  {overview:"Enterprise-grade wiki platform. Most flexible of the group but highest implementation LOE.",strengths:"Most flexible — custom themes, macros, templates, whiteboards, 1,000+ add-ons. Strong SSO at Standard+. Scales to enterprise.",weaknesses:"High implementation LOE — space planning, permissions, macros require dedicated setup. Sprawls badly without governance. Analytics add-on costs extra.",pricing:"~$5.75–$11/user/mo (Standard–Premium). Analytics for Confluence add-on costs extra.",recommendation:"❌ Best fit if KB will expand to engineering/CS/other teams. Overkill for sales-only use given high governance burden."},
+  {overview:"Purpose-built KB with best-in-class category management, versioning, and analytics. Strongest for governance-focused teams.",strengths:"Best category management (multi-level, per-category settings, icons, landing pages). Best versioning (named versions, side-by-side diff). Best search analytics (gap analysis, failed searches, reader engagement). Predictable flat-rate pricing.",weaknesses:"Salesforce integration thinner than Guru — no contextual in-SFDC card surfacing. Less sales-workflow-native. SSO on Business+ plan only.",pricing:"~$149–$599/mo flat rate (not per-seat for readers). AI features (Eddy) on Business/Enterprise tiers.",recommendation:"✅ Recommended. Best-in-class for governance, content quality, and analytics. Strong fit for Sales Ops documentation ownership."},
+  {overview:"Sales-first KB with AI-powered contextual surfacing in Slack and Salesforce. Purpose-built for sales teams.",strengths:"AI answers surface relevant cards in Slack and SFDC during live deal cycles. Verification workflows flag stale content proactively. Tags drive contextual AI. SAML SSO on all paid plans.",weaknesses:"Per-seat pricing compounds for large sales teams (~$10–20/user/mo). Less flexible for long-form content or complex nested hierarchies.",pricing:"~$10–$20/user/mo. Guru AI on higher plans. ROI strong if it reduces deal-cycle time.",recommendation:"✅ Recommended. Best fit for Deal Strategy and DSOS teams needing fast answers during live deals. In-SFDC and Slack surfacing is uniquely valuable."},
+  {overview:"Project management tool with a Docs module. KB is a secondary feature — not purpose-built.",strengths:"Universal search across tasks, docs, and comments. Familiar if team already uses ClickUp for PM. Good SSO and reasonable version history.",weaknesses:"KB is bolted on, not core. Category management is secondary to task hierarchy. No KB-specific analytics or tag analytics. Will show limitations at scale.",pricing:"~$7–$19/user/mo. Docs included in all paid plans.",recommendation:"Consider only if team is already deeply invested in ClickUp. Not purpose-built enough for a primary KB."},
+  {overview:"Sales enablement platform for managing and distributing customer-facing assets. Not a traditional KB.",strengths:"Strongest taxonomy for sales assets. AI content recommendations by deal stage, persona, and product. Enterprise-grade SSO and compliance. Best for buyer-facing playbook distribution.",weaknesses:"Expensive — enterprise pricing typically $30–60+/user/mo. Overkill for pure internal KB. Best ROI requires full sales enablement adoption.",pricing:"Enterprise pricing — contact for quote. Typically $30–60+/user/mo.",recommendation:"Revisit in 6–12 months if asset management needs outgrow Guru. Consider alongside (not instead of) an internal KB."},
+  {overview:"AI-first sales content platform. Best for generating and maintaining content at speed.",strengths:"AI-native editor for fast content generation. Strong semantic search. Good tagging and AI-driven content routing. WYSIWYG + HTML support.",weaknesses:"Newer platform — enterprise governance (version control, SSO at scale) less proven. Basic versioning only.",pricing:"Contact for pricing. Typically per-seat subscription.",recommendation:"Worth piloting if AI-assisted content creation is a top priority. Monitor platform maturity before full commitment."},
+];
+
+// ── STATE ──────────────────────────────────────────────────────────────────────
+
+const SK = "km_eval_samsara_v2";
+let st = (()=>{ try{ const s=localStorage.getItem(SK); if(s) return JSON.parse(s); }catch(e){} return mkDefaults(); })();
+
+function mkDefaults() {
+  const sc={}, rn={}, vn={}, wt={};
+  CATS.forEach(c=>c.reqs.forEach(r=>{ sc[r.id]=[...DS[r.id]]; rn[r.id]=DR[r.id]||""; wt[r.id]=r.w; }));
+  VENDORS.forEach((_,i)=>{ vn[i]={...DN[i]}; });
+  return {sc,rn,vn,wt};
+}
+
+let saveT;
+function persist() {
+  const t=document.getElementById("toast");
+  t.textContent="Saving…"; t.className="saving";
+  clearTimeout(saveT);
+  saveT=setTimeout(()=>{ localStorage.setItem(SK,JSON.stringify(st)); t.textContent="Saved"; t.className=""; },400);
+}
+
+// ── SCORING ────────────────────────────────────────────────────────────────────
+
+function rw(id){ return st.wt[id]??CATS.flatMap(c=>c.reqs).find(r=>r.id===id)?.w??1; }
+
+function catPct(cat,vi){ let s=0,m=0; cat.reqs.forEach(r=>{ const w=rw(r.id); s+=SW[st.sc[r.id]?.[vi]??0]*w; m+=w; }); return m?s/m:0; }
+
+function totalPct(vi){ let s=0,m=0; CATS.forEach(c=>c.reqs.forEach(r=>{ const w=rw(r.id); s+=SW[st.sc[r.id]?.[vi]??0]*w; m+=w; })); return m?s/m:0; }
+
+function scoreColor(p){
+  if(p>=.9)  return {fill:"#4F46E5",text:"#4F46E5",word:"Excellent"};
+  if(p>=.8)  return {fill:"#7C3AED",text:"#7C3AED",word:"Strong"};
+  if(p>=.63) return {fill:"#059669",text:"#059669",word:"Good"};
+  if(p>=.26) return {fill:"#D97706",text:"#D97706",word:"Limited"};
+  return {fill:"#DC2626",text:"#DC2626",word:"Weak"};
+}
+
+function stripeColor(v){ const p=totalPct(v); const c=scoreColor(p); return c.fill; }
+
+// ── SUMMARY ────────────────────────────────────────────────────────────────────
+
+function renderSummary() {
+  const g = document.getElementById("vgrid");
+  g.innerHTML = VENDORS.map((v,vi)=>{
+    const p = totalPct(vi);
+    const {fill,word} = scoreColor(p);
+    const pct = Math.round(p*100);
+    const vd = VERDICTS[vi];
+    const vl = VERDICT_LABELS[vd];
+    const cats = CATS.map(c=>{
+      const cp=catPct(c,vi), cc=scoreColor(cp).fill;
+      return `<div class="mini-row">
+        <span class="mini-label" title="${c.label}">${c.label}</span>
+        <div class="mini-track"><div class="mini-fill" style="width:${Math.round(cp*100)}%;background:${cc}"></div></div>
+        <span class="mini-pct" style="color:${cc}">${Math.round(cp*100)}%</span>
+      </div>`;
+    }).join("");
+    return `<div class="vcard">
+      <div class="vcard-stripe" style="background:${fill}"></div>
+      <div class="vcard-body">
+        <div class="vcard-top">
+          <span class="vcard-name">${v}</span>
+          <span class="verdict v-${vd}">${vl}</span>
+        </div>
+        <div class="vcard-score-area">
+          <div class="score-num" style="color:${fill}">${pct}<span class="score-den">%</span></div>
+          <div class="score-word">${word}</div>
+        </div>
+        <div class="vcard-cats">${cats}</div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+// ── MATRIX ─────────────────────────────────────────────────────────────────────
+
+function renderMatrix() {
+  const t = document.getElementById("mxtable");
+  let h = `<thead><tr>
+    <th>Requirement</th>
+    <th class="wth">Priority</th>
+    ${VENDORS.map(v=>`<th>${v}</th>`).join("")}
+    <th class="nth">Notes</th>
+  </tr></thead><tbody>`;
+
+  CATS.forEach(cat=>{
+    h+=`<tr class="cat-row"><td colspan="${3+VENDORS.length}">${cat.label}</td></tr>`;
+    cat.reqs.forEach(req=>{
+      const w=rw(req.id), wl=WLABELS[w], wc=w===3?"wH":w===2?"wM":"wL";
+      const badges=VENDORS.map((_,vi)=>{
+        const s=st.sc[req.id]?.[vi]??0;
+        return `<td class="scc"><span class="sbadge sb${s}" data-r="${req.id}" data-v="${vi}" onclick="cycleScore(this)" title="Click to change">${SL[s]}</span></td>`;
+      }).join("");
+      h+=`<tr>
+        <td>${req.text}</td>
+        <td class="wcc"><span class="wchip ${wc}" data-r="${req.id}" onclick="cycleW(this)" title="Click to change priority">${wl}</span></td>
+        ${badges}
+        <td><textarea class="rnote" rows="2" data-r="${req.id}" onchange="onRN(this)" placeholder="Notes…">${st.rn[req.id]||""}</textarea></td>
+      </tr>`;
+    });
+  });
+
+  t.innerHTML=h+"</tbody>";
+}
+
+function cycleScore(el){
+  const r=el.dataset.r, vi=+el.dataset.v;
+  const cur=st.sc[r][vi], nxt=cur>=4?0:cur+1;
+  st.sc[r][vi]=nxt;
+  el.className=`sbadge sb${nxt}`;
+  el.textContent=SL[nxt];
+  renderSummary(); persist();
+}
+
+function cycleW(el){
+  const r=el.dataset.r, cur=rw(r);
+  const nxt=cur>=3?1:cur+1;
+  st.wt[r]=nxt;
+  const wl=WLABELS[nxt], wc=nxt===3?"wH":nxt===2?"wM":"wL";
+  el.className=`wchip ${wc}`;
+  el.textContent=wl;
+  renderSummary(); persist();
+}
+
+function onRN(ta){ st.rn[ta.dataset.r]=ta.value; persist(); }
+
+// ── NOTES ──────────────────────────────────────────────────────────────────────
+
+function renderNotes(){
+  document.getElementById("vtabs").innerHTML=VENDORS.map((v,i)=>
+    `<button class="vtab${i===0?" active":""}" onclick="setVT(${i})">${v}</button>`).join("");
+
+  document.getElementById("vpanels").innerHTML=VENDORS.map((v,vi)=>{
+    const n=st.vn[vi]||{}, p=Math.round(totalPct(vi)*100), {word,text}=scoreColor(p/100);
+    const initials=v.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();
+    const fields=NF.map(f=>`<div class="nf${f.span?" s2":""}">
+      <span class="nlbl">${f.label}</span>
+      <textarea class="nta" data-vi="${vi}" data-f="${f.id}" onchange="onVN(this)">${(n[f.id]||"").replace(/</g,"&lt;")}</textarea>
+    </div>`).join("");
+    return `<div class="vpanel${vi===0?" active":""}" id="vp${vi}">
+      <div class="vp-head">
+        <div class="vi-av">${initials}</div>
+        <div class="vp-info">
+          <div class="vp-name">${v}</div>
+          <div class="vp-score-str" style="color:${text}">${p}% overall &nbsp;·&nbsp; ${word} &nbsp;·&nbsp; ${VERDICT_LABELS[VERDICTS[vi]]}</div>
+        </div>
+      </div>
+      <div class="ngrid">${fields}</div>
+    </div>`;
+  }).join("");
+}
+
+function setVT(vi){
+  document.querySelectorAll(".vtab").forEach((b,i)=>b.classList.toggle("active",i===vi));
+  document.querySelectorAll(".vpanel").forEach((p,i)=>p.classList.toggle("active",i===vi));
+}
+
+function onVN(ta){ const vi=+ta.dataset.vi,f=ta.dataset.f; if(!st.vn[vi])st.vn[vi]={}; st.vn[vi][f]=ta.value; persist(); }
+
+// ── TABS / RESET / EXPORT ──────────────────────────────────────────────────────
+
+function switchTab(btn){
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  document.getElementById(`${btn.dataset.tab}-view`).classList.add("active");
+  btn.classList.add("active");
+}
+
+function openReset(){ document.getElementById("reset-modal").classList.add("open"); }
+function closeReset(){ document.getElementById("reset-modal").classList.remove("open"); }
+function doReset(){ st=mkDefaults(); closeReset(); persist(); renderAll(); }
+
+function exportCSV(){
+  const rows=[["Requirement","Priority",...VENDORS,"Notes"]];
+  CATS.forEach(c=>{
+    rows.push([c.label,"",...VENDORS.map(()=>""),""]);
+    c.reqs.forEach(r=>rows.push([r.text,rw(r.id)===3?"High":rw(r.id)===2?"Medium":"Low",...VENDORS.map((_,vi)=>SL[st.sc[r.id]?.[vi]??0]),st.rn[r.id]||""]));
+  });
+  rows.push([]);
+  rows.push(["Vendor",...CATS.flatMap(c=>c.reqs.map(r=>r.text)),"Overall %","Verdict"]);
+  VENDORS.forEach((v,vi)=>rows.push([v,...CATS.flatMap(c=>c.reqs.map(r=>SL[st.sc[r.id]?.[vi]??0])),Math.round(totalPct(vi)*100)+"%",VERDICT_LABELS[VERDICTS[vi]]]));
+  rows.push([]);
+  rows.push(["Vendor Notes"]);
+  VENDORS.forEach((v,vi)=>{ rows.push([v]); NF.forEach(f=>rows.push(["",f.label,st.vn[vi]?.[f.id]||""])); });
+  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n");
+  const a=document.createElement("a"); a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(csv); a.download="km_eval_samsara_fy27.csv"; a.click();
+}
+
+function renderAll(){ renderSummary(); renderMatrix(); renderNotes(); }
+renderAll();
+</script>
+</body>
+</html>
