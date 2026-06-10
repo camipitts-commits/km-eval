@@ -199,7 +199,7 @@ td.wcc{text-align:center;padding:5px 3px}
 <div id="matrix-view" class="view">
   <div class="container">
     <div class="mx-topbar">
-      <div class="mx-hint">Click any score badge to cycle &nbsp;<b>Unscored → No → Partial → Meets → Exceeds</b>. Click weight chip to toggle priority.</div>
+      <div class="mx-hint">Click any score badge to cycle &nbsp;<b>Not Rated → Poor → Fair → Good → Excellent</b>.</div>
     </div>
     <div class="mx-wrap">
       <table class="mxtable" id="mxtable"></table>
@@ -234,7 +234,7 @@ const VENDORS = ["Google Docs","Zendesk","Confluence","Document360","Guru","Clic
 const VERDICTS = ["no","maybe","no","yes","yes","tbd","tbd","tbd"];
 const VERDICT_LABELS = {yes:"✅ Recommend",no:"❌ Rule out",maybe:"🤷 If on Zendesk",tbd:"🔍 Evaluate"};
 
-const SL = ["Unscored","No","Partial","Meets","Exceeds"];
+const SL = ["Not Rated","Poor","Fair","Good","Excellent"];
 const SW = [0, 0, 0.5, 0.85, 1.0];
 const WLABELS = ["L","L","M","H"]; // weight 1=L, 2=M, 3=H
 
@@ -295,11 +295,11 @@ const DR = {
 };
 
 const NF = [
-  {id:"overview",      label:"Overall impression", span:false},
-  {id:"strengths",     label:"Strengths",           span:false},
-  {id:"weaknesses",    label:"Weaknesses / gaps",   span:false},
-  {id:"pricing",       label:"Pricing & licensing", span:false},
-  {id:"recommendation",label:"Recommendation",      span:true},
+  {id:"overview",      label:"Platform Summary",    span:false},
+  {id:"strengths",     label:"What Works",          span:false},
+  {id:"weaknesses",    label:"Gaps & Limitations",  span:false},
+  {id:"pricing",       label:"Cost & Licensing",    span:false},
+  {id:"recommendation",label:"Our Verdict",         span:true},
 ];
 
 const DN = [
@@ -392,22 +392,19 @@ function renderMatrix() {
   const t = document.getElementById("mxtable");
   let h = `<thead><tr>
     <th>Requirement</th>
-    <th class="wth">Priority</th>
     ${VENDORS.map(v=>`<th>${v}</th>`).join("")}
     <th class="nth">Notes</th>
   </tr></thead><tbody>`;
 
   CATS.forEach(cat=>{
-    h+=`<tr class="cat-row"><td colspan="${3+VENDORS.length}">${cat.label}</td></tr>`;
+    h+=`<tr class="cat-row"><td colspan="${2+VENDORS.length}">${cat.label}</td></tr>`;
     cat.reqs.forEach(req=>{
-      const w=rw(req.id), wl=WLABELS[w], wc=w===3?"wH":w===2?"wM":"wL";
       const badges=VENDORS.map((_,vi)=>{
         const s=st.sc[req.id]?.[vi]??0;
         return `<td class="scc"><span class="sbadge sb${s}" data-r="${req.id}" data-v="${vi}" onclick="cycleScore(this)" title="Click to change">${SL[s]}</span></td>`;
       }).join("");
       h+=`<tr>
         <td>${req.text}</td>
-        <td class="wcc"><span class="wchip ${wc}" data-r="${req.id}" onclick="cycleW(this)" title="Click to change priority">${wl}</span></td>
         ${badges}
         <td><textarea class="rnote" rows="2" data-r="${req.id}" onchange="onRN(this)" placeholder="Notes…">${st.rn[req.id]||""}</textarea></td>
       </tr>`;
@@ -485,10 +482,10 @@ function closeReset(){ document.getElementById("reset-modal").classList.remove("
 function doReset(){ st=mkDefaults(); closeReset(); persist(); renderAll(); }
 
 function exportCSV(){
-  const rows=[["Requirement","Priority",...VENDORS,"Notes"]];
+  const rows=[["Requirement",...VENDORS,"Notes"]];
   CATS.forEach(c=>{
-    rows.push([c.label,"",...VENDORS.map(()=>""),""]);
-    c.reqs.forEach(r=>rows.push([r.text,rw(r.id)===3?"High":rw(r.id)===2?"Medium":"Low",...VENDORS.map((_,vi)=>SL[st.sc[r.id]?.[vi]??0]),st.rn[r.id]||""]));
+    rows.push([c.label,...VENDORS.map(()=>""),""]);
+    c.reqs.forEach(r=>rows.push([r.text,...VENDORS.map((_,vi)=>SL[st.sc[r.id]?.[vi]??0]),st.rn[r.id]||""]));
   });
   rows.push([]);
   rows.push(["Vendor",...CATS.flatMap(c=>c.reqs.map(r=>r.text)),"Overall %","Verdict"]);
